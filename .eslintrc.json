@@ -1,0 +1,10 @@
+{
+  "extends": ["@pega"],
+  "parserOptions": { "project": "tsconfig.json" },
+  "root": true,
+  "ignorePatterns": ["node_modules", "lib", "!.storybook", ".storybook/public"],
+  "rules": {
+    "prettier/prettier": "off",
+    "react/react-in-jsx-scope": "off"
+  }
+}

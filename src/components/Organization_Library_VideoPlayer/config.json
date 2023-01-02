@@ -1,0 +1,44 @@
+{
+  "name": "Organization_Library_VideoPlayer",
+  "label": "Video Player",
+  "description": "video player",
+  "organization": "apple",
+  "version": "0.0.1",
+  "library": "basic",
+  "componentKey": "Organization_Library_VideoPlayer",
+  "type": "Field",
+  "subtype": "Text",
+  "icon": "images/pz-text-input-active.svg",
+  "properties": [
+    {
+      "name": "value",
+      "label": "Property",
+      "format": "PROPERTY"
+    },
+    {
+      "name": "label",
+      "label": "Label value",
+      "format": "TEXT"
+    },
+    {
+      "name": "placeholder",
+      "label": "Placeholder",
+      "format": "TEXT"
+    },
+    {
+      "name": "visibility",
+      "label": "Visible",
+      "format": "VISIBILITY"
+    },
+    {
+      "name": "disabled",
+      "label": "Disabled",
+      "format": "DISABLED"
+    },
+    {
+      "name": "required",
+      "label": "Required",
+      "format": "REQUIRED"
+    }
+  ]
+}
