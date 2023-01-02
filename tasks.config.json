@@ -1,0 +1,21 @@
+{
+  "components-directory-path": "src/components",
+  "server-config": {
+    "server": "https://localhost:38764/prweb",
+    "user": "user",
+    "password": "password",
+    "rulesetName": "rulesetName",
+    "rulesetVersion": "rulesetVersion",
+    "sourceOfComponents": "Server",
+    "devBuild": false,
+    "clientId": "",
+    "clientSecret": ""
+  },
+  "component": {
+    "library": "",
+    "type": "",
+    "subtype": "",
+    "description": "",
+    "icon": ""
+  }
+}

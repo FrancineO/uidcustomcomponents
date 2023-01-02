@@ -1,0 +1,13 @@
+{
+  "name": "Organization_Library_MediaURL",
+  "label": "MediaURL",
+  "description": "A pair of components for taking input and displaying teh value of a video or audio url.",
+  "organization": "TBD",
+  "version": "0.0.1",
+  "library": "TBD",
+  "componentKey": "Organization_Library_MediaURL",
+  "type": "Field",
+  "subtype": "Text",
+  "icon": "TBD",
+  "properties": ["TBD"]
+}
