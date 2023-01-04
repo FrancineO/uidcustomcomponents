@@ -34,7 +34,7 @@ export const urgentStatusBadge = () => {
   );
 };
 
-export const warnStatusBadge = () => {
+export const warningStatusBadge = () => {
   const props = {
     labelText: 'Warn',
     variant: 'warn'
