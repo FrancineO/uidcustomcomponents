@@ -26,7 +26,7 @@
     "fix:format": "prettier -w .",
     "predeploy": "npm run build-storybook",
     "deploy-storybook": "gh-pages -d storybook-static",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook -o docs-build"
   },
   "repository": {
     "type": "git",
