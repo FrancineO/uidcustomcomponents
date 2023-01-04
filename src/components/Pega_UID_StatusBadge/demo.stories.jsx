@@ -36,7 +36,7 @@ export const urgentStatusBadge = () => {
 
 export const warningStatusBadge = () => {
   const props = {
-    labelText: 'Warn',
+    labelText: 'Warning',
     variant: 'warn'
   };
 
