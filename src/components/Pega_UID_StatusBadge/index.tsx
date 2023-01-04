@@ -8,13 +8,13 @@ import StyledPegaUidStatusBadgeWrapper from './styles';
 // props passed in combination of props from property panel (config.json) and run time props from Constellation
 // any default values in config.pros should be set in defaultProps at bottom of this file
 const PegaUidStatusBadge = (props: {
-  labelType: any;
-  labelText: any;
-  labelField: any;
-  variantType: any;
-  variant: any;
-  variantField: any;
-  value: any;
+  labelType: string;
+  labelText: string;
+  labelField: string;
+  variantType: string;
+  variant: string;
+  variantField: string;
+  value: string;
 }) => {
   const { labelType, labelText, labelField, variantType, variant, variantField, value } = props;
 
