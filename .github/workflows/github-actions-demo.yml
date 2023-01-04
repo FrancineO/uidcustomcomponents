@@ -1,4 +1,5 @@
 name: Build and Deploy
+run-name: ${{ github.actor }} is testing out Run and Deploy
 on: 
   push:
     paths: ["src/components/**"] # Trigger the action only when files change in the folders defined here
