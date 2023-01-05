@@ -2,7 +2,7 @@ name: Publish Storybook
 run-name: ${{ github.actor }} is testing out Publish Storybook
 on:
   push:
-    branched:
+    branches:
       - master
     paths: ["src/components/**", "package.json", ".github/workflows/**"] # Trigger the action only when files change in the folders defined here
 jobs:
