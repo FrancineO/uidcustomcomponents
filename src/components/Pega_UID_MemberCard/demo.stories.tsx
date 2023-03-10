@@ -36,7 +36,7 @@ const Template: ComponentStory<typeof PegaUidMemberCard> = args => {
 };
 
 export const baseMemberCard = Template.bind({});
-baseMemberCard.args = { ...Template.args };
+baseMemberCard.args = { ...Template.args, mainColor: 'Primary'  };
 
 export const warnMemberCard = Template.bind({});
 warnMemberCard.args = { ...Template.args, mainColor: 'Warn' };
