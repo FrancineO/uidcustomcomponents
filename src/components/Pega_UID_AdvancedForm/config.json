@@ -1,0 +1,290 @@
+{
+  "name": "Pega_UID_AdvancedForm",
+  "label": "Advanced form",
+  "description": "",
+  "organization": "Pega",
+  "version": "0.0.1",
+  "library": "UID",
+  "allowedApplications": [],
+  "componentKey": "Pega_UID_AdvancedForm",
+  "type": "Template",
+  "subtype": "FORM",
+  "icon": "DefaultForm.svg",
+  "properties": [
+    {
+      "format": "LABEL",
+      "label": "Header settings",
+      "name": "Header settings",
+      "variant": "h2"
+    },
+    {
+      "format": "CASCADE",
+      "name": "HeaderCascade",
+      "label": "HeaderCascade",
+      "source": {
+        "name": "displayStatus",
+        "label": "Display status icon",
+        "format": "BOOLEAN"
+      },
+      "cascadeElements": [
+        {
+          "key": "statusField",
+          "name": "statusField",
+          "label": "Status icon field",
+          "format": "PROPERTY",
+          "required": true,
+          "match": true
+        }
+      ]
+    },
+    {
+      "label": "Primary header",
+      "name": "Primary header",
+      "format": "GROUP",
+      "properties": [
+        {
+          "format": "CASCADE",
+          "name": "HeaderCascade",
+          "label": "HeaderCascade",
+          "source": {
+            "name": "primaryHeaderType",
+            "label": "Header type",
+            "format": "SELECT",
+            "placeholder": "None",
+            "source": [
+              { "key": "text", "value": "Text" },
+              { "key": "property", "value": "Property" }
+            ]
+          },
+          "cascadeElements": [
+            {
+              "key": "primaryHeaderText",
+              "name": "primaryHeaderText",
+              "label": "Header value",
+              "format": "TEXT",
+              "required": true,
+              "match": "text"
+            },
+            {
+              "key": "primaryHeaderField",
+              "name": "primaryHeaderField",
+              "label": "Header field",
+              "format": "PROPERTY",
+              "required": true,
+              "match": "property"
+            }
+          ]
+        },
+        {
+          "format": "SELECT",
+          "name": "primaryVariant",
+          "label": "Header variant",
+          "defaultValue": "h1",
+          "visibility": "($this.primaryHeaderType = 'text' ||  $this.primaryHeaderType = 'property')",
+          "source": [
+            {
+              "key": "h1",
+              "value": "h1"
+            },
+            {
+              "key": "h2",
+              "value": "h2"
+            },
+            {
+              "key": "h3",
+              "value": "h3"
+            },
+            {
+              "key": "h4",
+              "value": "h4"
+            },
+            {
+              "key": "h5",
+              "value": "h5"
+            },
+            {
+              "key": "h6",
+              "value": "h6"
+            },
+            {
+              "key": "paragraph",
+              "value": "paragraph"
+            },
+            {
+              "key": "bold",
+              "value": "bold"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Secondary header",
+      "name": "Secondary header",
+      "format": "GROUP",
+      "properties": [
+        {
+          "format": "CASCADE",
+          "name": "SecondaryHeaderCascade",
+          "label": "SecondaryHeaderCascade",
+          "source": {
+            "name": "secondaryHeaderType",
+            "label": "Header type",
+            "format": "SELECT",
+            "placeholder": "None",
+            "source": [
+              { "key": "text", "value": "Text" },
+              { "key": "property", "value": "Property" }
+            ]
+          },
+          "cascadeElements": [
+            {
+              "key": "secondaryHeaderText",
+              "name": "secondaryHeaderText",
+              "label": "Header value",
+              "format": "TEXT",
+              "required": true,
+              "match": "text"
+            },
+            {
+              "key": "secondaryHeaderField",
+              "name": "secondaryHeaderField",
+              "label": "Header field",
+              "format": "PROPERTY",
+              "required": true,
+              "match": "property"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "format": "LABEL",
+      "label": "Form action settings",
+      "name": "Form action settings",
+      "variant": "h2"
+    },
+    {
+      "format": "CASCADE",
+      "name": "FormAction",
+      "label": "Form action",
+      "source": {
+        "name": "mainFormAction",
+        "label": "Main form action",
+        "format": "SELECT",
+        "defaultValue": "none",
+        "source": [
+          { "key": "none", "value": "None" },
+          { "key": "buttonMode", "value": "Action button" },
+          { "key": "collapsibleMode", "value": "Collapse/Expand" }
+        ]
+      },
+      "cascadeElements": [
+        {
+          "key": "defaultCollapsibleBehavior",
+          "name": "defaultCollapsibleBehavior",
+          "label": "Default display",
+          "format": "SELECT",
+          "defaultValue": "Expanded",
+          "match": "collapsibleMode",
+          "source": [
+            { "key": "Expanded", "value": "Expanded" },
+            { "key": "Collapsed", "value": "Collapsed" }
+          ]
+        },
+        {
+          "label": "Action configuration",
+          "name": "Action configuration",
+          "format": "GROUP",
+          "match": "buttonMode",
+          "properties": [
+            {
+              "name": "localAction",
+              "label": "Local action name",
+              "format": "TEXT"
+            },
+            {
+              "name": "localActionType",
+              "label": "Type of local action",
+              "format": "TEXT"
+            },
+            {
+              "name": "modalHeader",
+              "label": "Modal header",
+              "format": "TEXT"
+            }
+          ]
+        },
+        {
+          "label": "Button configuration",
+          "name": "Button configuration",
+          "format": "GROUP",
+          "match": "buttonMode",
+          "properties": [
+            {
+              "name": "buttonVariant",
+              "label": "Button variant",
+              "defaultValue": "simple",
+              "format": "SELECT",
+              "source": [
+                {
+                  "key": "simple",
+                  "value": "Simple"
+                },
+                {
+                  "key": "primary",
+                  "value": "Filled"
+                },
+                {
+                  "key": "secondary",
+                  "value": "Outlined"
+                },
+                {
+                  "key": "link",
+                  "value": "Link"
+                }
+              ]
+            },
+            {
+              "name": "buttonLabel",
+              "label": "Button Label",
+              "required": true,
+              "format": "TEXT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "format": "LABEL",
+      "label": "Content settings",
+      "name": "Content settings",
+      "variant": "h2"
+    },
+    {
+      "name": "hideContent",
+      "label": "Hide Content",
+      "format": "BOOLEAN",
+      "defaultValue": false,
+      "visibility": "$this.mainFormAction = buttonMode"
+    },
+    {
+      "name": "numberOfColumns",
+      "label": "Number of columns",
+      "format": "SELECT",
+      "defaultValue": "One",
+      "source": [
+        { "key": "One", "value": "One" },
+        { "key": "Two", "value": "Two" },
+        { "key": "Three", "value": "Three" }
+      ]
+    },
+    {
+      "name": "formContent",
+      "label": "Content (Please select minimum one item)",
+      "variant": "h3",
+      "format": "CONTENTPICKER",
+      "addTypeList": ["Fields", "Widgets", "Views"]
+    }
+  ]
+}
