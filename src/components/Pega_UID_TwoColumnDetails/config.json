@@ -1,0 +1,42 @@
+{
+  "name": "Pega_UID_TwoColumnDetails",
+  "label": " Two Column Details",
+  "description": " Two Column Details",
+  "organization": "Pega",
+  "version": "1.0.0",
+  "library": "UID",
+  "allowedApplications": [],
+  "componentKey": "Pega_UID_TwoColumnDetails",
+  "type": "Template",
+  "subtype": "DETAILS",
+  "icon": "TwoColumnDetails.svg",
+  "properties": [
+    {
+      "name": "showHighlightedData",
+      "label": "Enable highlighted fields",
+      "format": "BOOLEAN"
+    },
+    {
+      "name": "highlightedData",
+      "label": "Highlighted fields",
+      "format": "CONTENTPICKER",
+      "addTypeList": ["Fields"],
+      "visibility": "$this.showHighlightedData = true",
+      "saveToConfig": true
+    },
+    {
+      "name": "A",
+      "label": "Region A",
+      "format": "CONTENTPICKER",
+      "addTypeList": ["Fields", "Views"],
+      "allowCreatingGroup": true
+    },
+        {
+      "name": "B",
+      "label": "Region B",
+      "format": "CONTENTPICKER",
+      "addTypeList": ["Fields", "Views"],
+      "allowCreatingGroup": true
+    }
+  ]
+}
