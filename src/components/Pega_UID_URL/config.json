@@ -1,0 +1,237 @@
+{
+  "name": "Pega_UID_URL",
+  "label": " URL",
+  "description": " URL",
+  "organization": "Pega",
+  "version": "1.0.0",
+  "library": "UID",
+  "allowedApplications": [],
+  "componentKey": "Pega_UID_URL",
+  "type": "Field",
+  "subtype": "Text-URL",
+  "icon": "images/pz-url-active.svg",
+  "properties": [
+    {
+      "name": "label",
+      "label": "Field label",
+      "format": "TEXT",
+      "required": true
+    },
+    {
+      "name": "readOnly",
+      "label": "Edit mode",
+      "format": "READONLY"
+    },
+    {
+      "label": "Column settings",
+      "format": "GROUP",
+      "visibility": "@VIEWTYPE == 'MultiRecordDisplayAsTable'",
+      "properties": [
+        {
+          "name": "columnWidth",
+          "label": "Column width",
+          "format": "SELECT",
+          "source": [
+            {
+              "key": "auto",
+              "value": "Auto"
+            },
+            {
+              "key": "custom",
+              "value": "Custom"
+            }
+          ]
+        },
+        {
+          "name": "width",
+          "label": "Width (px)",
+          "format": "NUMBER",
+          "visibility": "$this.columnWidth == 'custom'"
+        }
+      ]
+    },
+    {
+      "label": "Input settings",
+      "format": "GROUP",
+      "visibility": "(!readOnly = true)",
+      "properties": [
+        {
+          "name": "placeholder",
+          "label": "Placeholder",
+          "format": "TEXT"
+        },
+        {
+          "name": "helperText",
+          "label": "Helper text",
+          "format": "TEXT"
+        }
+      ]
+    },
+    {
+      "label": "Read-only settings",
+      "format": "GROUP",
+      "properties": [
+        {
+          "format": "SELECT",
+          "name": "displayAs",
+          "label": "Display As",
+          "defaultValue": "defaultURL",
+          "source": [
+            {
+              "key": "defaultURL",
+              "value": "URL"
+            },
+            {
+              "key": "Image",
+              "value": "Image"
+            },
+            {
+              "key": "labelText",
+              "value": "URL Label"
+            }
+          ]
+        },
+        {
+          "format": "CASCADE",
+          "visibility": "(displayAs = labelText)",
+          "source": {
+            "format": "SELECT",
+            "label": "Display text Selection",
+            "name": "urlLabelSelection",
+            "defaultValue": "constant",
+            "source": [
+              {
+                "key": "constant",
+                "value": "Constant"
+              },
+              {
+                "key": "propertyRef",
+                "value": "Property Reference"
+              }
+            ]
+          },
+          "cascadeElements": [
+            {
+              "key": "urlLabel",
+              "format": "TEXT",
+              "name": "urlLabel",
+              "label": "Display text",
+              "match": "constant"
+            },
+            {
+              "key": "urlLabel",
+              "format": "PROPERTY",
+              "name": "propUrlLabel",
+              "label": "Display text",
+              "match": "propertyRef"
+            }
+          ]
+        },
+        {
+          "format": "GROUP",
+          "visibility": "(displayAs = Image)",
+          "properties": [
+            {
+              "format": "SELECT",
+              "name": "widthSel",
+              "label": "Width",
+              "defaultValue": "defaultWidth",
+              "source": [
+                {
+                  "key": "defaultWidth",
+                  "value": "Default Width"
+                },
+                {
+                  "key": "widthpx",
+                  "value": "Custom Width"
+                }
+              ]
+            },
+            {
+              "name": "customWidth",
+              "label": "Width (px)",
+              "visibility": "(widthSel = widthpx)",
+              "format": "NUMBER"
+            },
+            {
+              "format": "CASCADE",
+              "source": {
+                "format": "SELECT",
+                "label": "Image Alt Text",
+                "name": "altText",
+                "defaultValue": "constant",
+                "source": [
+                  {
+                    "key": "constant",
+                    "value": "Constant"
+                  },
+                  {
+                    "key": "propertyRef",
+                    "value": "Property Reference"
+                  }
+                ]
+              },
+              "cascadeElements": [
+                {
+                  "key": "altTextOfImage",
+                  "format": "TEXT",
+                  "name": "altTextOfImage",
+                  "label": "Alt Text Value",
+                  "defaultValue": "",
+                  "match": "constant"
+                },
+                {
+                  "key": "altTextOfImage",
+                  "format": "PROPERTY",
+                  "name": "propaltTextOfImage",
+                  "label": "Alt Text Value",
+                  "match": "propertyRef"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Conditions",
+      "format": "GROUP",
+      "properties": [
+        {
+          "name": "required",
+          "label": "Required",
+          "format": "REQUIRED",
+          "visibility": "(!readOnly = true)"
+        },
+        {
+          "name": "disabled",
+          "label": "Disabled",
+          "format": "DISABLED",
+          "visibility": "(!readOnly = true)"
+        },
+        {
+          "name": "visibility",
+          "label": "Visibility",
+          "format": "VISIBILITY"
+        }
+      ]
+    },
+    {
+      "label": "Advanced",
+      "format": "GROUP",
+      "collapsible": true,
+      "properties": [
+        {
+          "name": "testId",
+          "label": "Test ID",
+          "format": "TEXT",
+          "ignorePattern": "[^-_\\p{N}\\p{L}]",
+          "includeAnnotations": false
+        }
+      ]
+    }
+  ],
+  "defaultConfig": {
+    "label": "@L $this.label"
+  }
+}
