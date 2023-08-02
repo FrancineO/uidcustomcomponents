@@ -1,0 +1,23 @@
+{
+  "name": "Pega_UID_CaseWidget",
+  "label": " Case Widget",
+  "description": " Case Widget",
+  "organization": "Pega",
+  "version": "1.0.0",
+  "library": "UID",
+  "allowedApplications": [],
+  "componentKey": "Pega_UID_CaseWidget",
+  "type": "Widget",
+  "subtype": "CASE",
+  "icon": "OneColumnPage.svg",
+  "properties": [
+   {
+      "name": "label",
+      "label": "Label value",
+      "format": "TEXT"
+    }
+  ],
+  "defaultConfig": {
+     "label": "@L $this.label"
+  }
+}
