@@ -25,7 +25,7 @@ export default {
   },
   argTypes: {
     mainColor: {
-      options: ['Primary', 'Warn'],
+      options: ['Primary', 'Warn', 'Success'],
       control: { type: 'radio' }
     }
   }
@@ -40,3 +40,6 @@ baseMemberCard.args = { ...Template.args };
 
 export const warnMemberCard = Template.bind({});
 warnMemberCard.args = { ...Template.args, mainColor: 'Warn' };
+
+export const successMemberCard = Template.bind({});
+successMemberCard.args = { ...Template.args, mainColor: 'Success' };

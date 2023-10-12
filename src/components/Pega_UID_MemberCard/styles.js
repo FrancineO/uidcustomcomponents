@@ -39,6 +39,10 @@ const StyledMemberCard = styled.div(() => {
       background: ${theme.base.palette.warn};
     }
 
+    .card .additional.success {
+      background: ${theme.base.palette.success};
+    }
+
     .card:hover .additional {
       width: 100%;
       border-radius: ${theme.base['border-radius']};

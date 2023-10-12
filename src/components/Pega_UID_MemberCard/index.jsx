@@ -31,8 +31,6 @@ const PegaUidMemberCard = props => {
     }
   };
 
-  console.log(datasource);
-
   if (datasource && datasource.source) {
     ID = datasource.source[0].ID;
     firstName = datasource.source[0].firstName;
@@ -43,13 +41,12 @@ const PegaUidMemberCard = props => {
   }
 
   const theme = PCore?.getEnvironmentInfo().getTheme();
-  console.log(firstName);
 
   return (
     <Configuration theme={theme}>
       <StyledPegaUidMemberCardWrapper>
         <Card className='card'>
-          <div className={`additional ${mainColor === 'Warn' ? 'warn' : ''}`}>
+          <div className={`additional ${mainColor.toLowerCase()}`}>
             <Flex className='user-card' container={{ alignItems: 'center', justify: 'start' }}>
               <Avatar
                 className='avatar'

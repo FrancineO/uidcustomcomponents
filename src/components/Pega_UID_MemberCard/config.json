@@ -69,7 +69,8 @@
       "defaultValue": "Primary",
       "source": [
         { "key": "Primary", "value": "Primary" },
-        { "key": "Warn", "value": "Warn" }
+        { "key": "Warn", "value": "Warn" },
+        { "key": "Success", "value": "Success" }
       ]
     }
   ],

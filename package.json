@@ -27,9 +27,10 @@
     "lint:spelling": "cspell --no-progress **/*",
     "build-storybook": "build-storybook -o docs-build",
     "predeploy": "npm run build-storybook",
-    "deploy-storybook": "gh-pages -d storybook-static"
+    "deploy-storybook": "gh-pages -d storybook-static",
+    "chromatic": "chromatic --exit-zero-on-changes"
   },
-    "scriptsComments": {
+  "scriptsComments": {
     "build": "tsc -b tsconfig.build.json",
     "fix": "run-p -cl fix:*",
     "fix:es": "eslint --fix .",
@@ -65,8 +66,8 @@
     "@pega/eslint-config": "^0.3.2",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
-    "@storybook/addon-links": "^6.5.12",
     "@storybook/addon-knobs": "^6.3.1",
+    "@storybook/addon-links": "^6.5.12",
     "@storybook/addon-storysource": "^6.5.12",
     "@storybook/builder-webpack5": "^6.5.12",
     "@storybook/manager-webpack5": "^6.5.12",
@@ -77,6 +78,7 @@
     "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "chromatic": "^7.3.0",
     "eslint": "^8.4.1",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.3.0",
@@ -93,5 +95,7 @@
     "prettier": "2.7.1",
     "stylelint": "^14.11.0",
     "typescript": "~4.8.3"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "uidcustomcomponents@1.0.0"
 }
