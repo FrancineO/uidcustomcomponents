@@ -1,0 +1,26 @@
+{
+  "components-directory-path": "src/components",
+  "server-config": {
+    "rulesetName": "TestApp",
+    "rulesetVersion": "01-01-01",
+    "sourceOfComponents": "Server",
+    "devBuild": false,
+    "serverType": "infinity",
+    "server": "https://ixdemea.lab.pega.com/prweb",
+    "grantType": "authCode",
+    "redirectUri": "https://localhost:4010/",
+    "cert": "./keys/dxcb.crt",
+    "key": "./keys/dxcb.key",
+    "authService": "pega",
+    "password": "",
+    "clientId": "10095186356008396159"
+  },
+  "component": {
+    "library": "UID",
+    "type": "",
+    "version": "1.0.0",
+    "subtype": "",
+    "description": "",
+    "icon": ""
+  }
+}
