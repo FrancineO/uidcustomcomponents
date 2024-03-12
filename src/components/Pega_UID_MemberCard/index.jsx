@@ -31,8 +31,6 @@ const PegaUidMemberCard = props => {
     }
   };
 
-  console.log(datasource);
-
   if (datasource && datasource.source) {
     ID = datasource.source[0].ID;
     firstName = datasource.source[0].firstName;
