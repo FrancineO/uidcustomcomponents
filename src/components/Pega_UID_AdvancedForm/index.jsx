@@ -1,4 +1,3 @@
-// Changes
 import { useEffect, useState, Fragment } from 'react';
 import {
   Flex,
