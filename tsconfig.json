@@ -3,6 +3,7 @@
   "include": ["./**/*", ".storybook/**/*"],
   "compilerOptions": {
     "noEmit": true,
-    "allowJs": true
+    "allowJs": true,
+    "importsNotUsedAsValues": "remove"
   }
 }
