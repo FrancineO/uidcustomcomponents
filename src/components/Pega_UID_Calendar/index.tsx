@@ -435,54 +435,50 @@ export const PegaUidCalendar = (props: CalendarProps) => {
         </CardContent>
       </Card>
 
-      {eventInPopover?.eventEl && eventInPopover?.eventInfo && (
-        <Popover target={eventInPopover.eventEl} portal arrow showDelay='short' placement='right'>
-          <Card>
-            <CardContent>
-              <Text variant='h3' className='event-label'>
-                {eventInPopover.eventInfo._def.title}
+      <Popover
+        show={!!eventInPopover?.eventEl && !!eventInPopover?.eventInfo}
+        target={eventInPopover.eventEl}
+        portal
+        arrow
+        showDelay='long'
+        placement='right'
+      >
+        <Card>
+          <CardContent>
+            <Text variant='h3' className='event-label'>
+              {eventInPopover.eventInfo?._def.title}
+            </Text>
+            <div>
+              <Icon name='calendar-empty' role='img' aria-label='calendar icon' size='s' />
+              <Text variant='primary' className='event-label'>
+                {getDateTimeFromIsoString(
+                  eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
+                  dateTimeType.date,
+                  {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }
+                )}
               </Text>
-              <div>
-                <Icon name='calendar-empty' role='img' aria-label='calendar icon' size='s' />
-                <Text variant='primary' className='event-label'>
-                  {getDateTimeFromIsoString(
-                    eventInPopover.eventInfo._def.extendedProps.item.StartTime,
-                    dateTimeType.date,
-                    {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }
-                  )}
-                </Text>
-              </div>
-              <div>
-                <Icon name='clock' role='img' aria-label='clock icon' size='s' />
-                <Text variant='primary' className='event-label'>
-                  {getDateTimeFromIsoString(
-                    eventInPopover.eventInfo._def.extendedProps.item.StartTime,
-                    dateTimeType.time
-                  )}{' '}
-                  {getDateTimeFromIsoString(
-                    eventInPopover.eventInfo._def.extendedProps.item.EndTime,
-                    dateTimeType.time
-                  )}
-                </Text>
-              </div>
-              {/* <div>
-                <Icon name='location-empty' role='img' aria-label='calendar icon' size='s' />
-                <Text variant='primary' className='event-label'>
-                  {getDateTimeFromIsoString(
-                    eventInPopover.eventInfo._def.extendedProps.item.StartTime, dateTimeType.date
-                    dateTimeType.time
-                  )}
-                </Text>
-              </div> */}
-            </CardContent>
-          </Card>
-        </Popover>
-      )}
+            </div>
+            <div>
+              <Icon name='clock' role='img' aria-label='clock icon' size='s' />
+              <Text variant='primary' className='event-label'>
+                {getDateTimeFromIsoString(
+                  eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
+                  dateTimeType.time
+                )}{' '}
+                {getDateTimeFromIsoString(
+                  eventInPopover.eventInfo?._def.extendedProps.item.EndTime,
+                  dateTimeType.time
+                )}
+              </Text>
+            </div>
+          </CardContent>
+        </Card>
+      </Popover>
     </StyledCalendarWrapper>
   );
 };
