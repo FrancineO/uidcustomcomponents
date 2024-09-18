@@ -108,7 +108,9 @@ export const PegaUidCalendar = (props: CalendarProps) => {
   const [eventInPopover, setEventInPopover] = useState<{
     eventEl: HTMLDivElement | null;
     eventInfo: EventImpl | null;
-  }>({ eventEl: null, eventInfo: null });
+    inPopover: boolean;
+    inEl: boolean;
+  }>({ eventEl: null, eventInfo: null, inPopover: false, inEl: false });
 
   const getDateTimeFromIsoString = (
     isoString: string,
@@ -203,7 +205,6 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     (window as any).PCore.getDataApiUtils()
       .getData(dataPage, {})
       .then((response: any) => {
-        console.log(response);
         if (response.data.data !== null) {
           const tmpevents: Array<Event> = [];
           response.data.data.forEach((item: any) => {
@@ -259,14 +260,55 @@ export const PegaUidCalendar = (props: CalendarProps) => {
   };
 
   const handleEventMouseEnter = (mouseEnterInfo: EventHoveringArg) => {
-    setEventInPopover({
-      eventEl: mouseEnterInfo.el as HTMLDivElement,
-      eventInfo: mouseEnterInfo.event as EventImpl
-    });
+    setTimeout(
+      () =>
+        setEventInPopover({
+          eventEl: eventInPopover.inPopover
+            ? eventInPopover.eventEl
+            : (mouseEnterInfo.el as HTMLDivElement),
+          eventInfo: eventInPopover.inPopover
+            ? eventInPopover.eventInfo
+            : (mouseEnterInfo.event as EventImpl),
+          inPopover: false,
+          inEl: true
+        }),
+      100
+    );
   };
 
   const handleEventMouseLeave = () => {
-    setEventInPopover({ eventEl: null, eventInfo: null });
+    setTimeout(
+      () =>
+        setEventInPopover({
+          eventEl: eventInPopover.inPopover ? eventInPopover.eventEl : null,
+          eventInfo: eventInPopover.eventInfo,
+          inPopover: eventInPopover.inPopover,
+          inEl: false
+        }),
+      100
+    );
+  };
+
+  const handlePopoverMouseEnter = () => {
+    setEventInPopover({
+      eventEl: eventInPopover.eventEl,
+      eventInfo: eventInPopover.eventInfo,
+      inPopover: true,
+      inEl: false
+    });
+  };
+
+  const handlePopoverMouseLeave = () => {
+    setTimeout(
+      () =>
+        setEventInPopover({
+          eventEl: eventInPopover.inEl ? eventInPopover.eventEl : null,
+          eventInfo: eventInPopover.eventInfo,
+          inPopover: false,
+          inEl: eventInPopover.inEl
+        }),
+      100
+    );
   };
 
   const handleDateChange = (objInfo: any) => {
@@ -440,8 +482,10 @@ export const PegaUidCalendar = (props: CalendarProps) => {
         target={eventInPopover.eventEl}
         portal
         arrow
-        showDelay='long'
+        showDelay='short'
         placement='right'
+        onMouseEnter={handlePopoverMouseEnter}
+        onMouseLeave={handlePopoverMouseLeave}
       >
         <Card>
           <CardContent>

@@ -105,8 +105,8 @@ const setPCore = () => {
                 },
                 {
                   Category: 'in person',
-                  EndTime: '2024-09-06T10:00:00.000Z',
-                  StartTime: '2024-09-06T11:00:00.000Z',
+                  StartTime: '2024-09-06T10:00:00.000Z',
+                  EndTime: '2024-09-06T11:00:00.000Z',
                   pyGUID: 'A-999',
                   pyLabel: 'James Smith',
                   Type: 'Termin',
