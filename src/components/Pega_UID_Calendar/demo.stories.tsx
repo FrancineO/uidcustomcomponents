@@ -104,22 +104,20 @@ const setPCore = () => {
                   }
                 },
                 {
-                  Category: 'in person',
-                  StartTime: '2024-09-06T10:00:00.000Z',
-                  EndTime: '2024-09-06T11:00:00.000Z',
-                  pyGUID: 'A-999',
+                  StartTime: '2024-09-06T11:00:00.000Z',
+                  EndTime: '2024-09-06T10:00:00.000Z',
+                  TerminID: 'A-999',
                   pyLabel: 'James Smith',
                   Type: 'Termin',
                   Termin: {
                     pzInsKey: 'Termin A-999',
+                    pxObjClass: 'Termin-Obj-Class',
                     Beratungsart: 'Folgeberatung',
                     Contact: {
                       FirstName: 'James',
                       LastName: 'Smith',
                       FullName: 'James Smith',
-                      Salutation: 'Herr',
-                      'Mobile Nr.': '0123456789',
-                      'E-mail': 'james.smith@candidate.com'
+                      Salutation: 'Herr'
                     }
                   }
                 },

@@ -231,10 +231,6 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                 title = item.Subject;
                 break;
             }
-            // if (item.CompleteDay) {
-            //   item.StartTime = '06:00:00';
-            //   item.EndTime = '21:00:00';
-            // }
 
             tmpevents.push({
               id: item.pyGUID,
@@ -252,11 +248,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
       });
   };
 
-  const handleEventClick = (eventClickInfo: EventClickArg) => {
-    const eventDetails = eventClickInfo.event.extendedProps;
-    getPConnect()
-      .getActionsApi()
-      .openWorkByHandle(eventDetails.item.pyGUID, eventDetails.item.pxObjClass);
+  const handleEventClick = () => {
   };
 
   const handleEventMouseEnter = (mouseEnterInfo: EventHoveringArg) => {
@@ -317,7 +309,6 @@ export const PegaUidCalendar = (props: CalendarProps) => {
       calendar.setOption('weekends', false);
     } else {
       calendar.setOption('weekends', weekendIndicator);
-      // setWorkingWeek(false);
     }
     switch (currentViewType) {
       case ViewType.Day:
@@ -355,9 +346,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     if (calendarRef) {
       const cal: any = calendarRef.current;
       const calendarAPI = cal.getApi();
-      // setWorkingWeek(viewType === ViewType.WorkWeek);
       const view = viewType === ViewType.WorkWeek ? ViewType.Week : viewType;
-      // setCurrentView(viewType);
       setCurrentViewType(viewType);
       calendarAPI.changeView(view);
       const viewButtons = (event.target as HTMLElement).parentNode?.children;
@@ -365,6 +354,13 @@ export const PegaUidCalendar = (props: CalendarProps) => {
         if (!event.target.isEqualNode(button)) button.classList.remove('fc-button-active');
       }
     }
+  };
+
+  const openPreviewEventOnClick = () => {
+    const eventInfoObj = eventInPopover.eventInfo?._def.extendedProps.item;
+    getPConnect().getActionsApi().showCasePreview(eventInfoObj.TerminID, {
+      caseClassName: eventInfoObj.Termin.pxObjClass
+    });
   };
 
   /* Subscribe to changes to the assignment case */
@@ -520,6 +516,27 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                 )}
               </Text>
             </div>
+            {eventInPopover.eventInfo?._def.extendedProps.item.Sammeltermin && (
+              <>
+                <Icon name='location' role='img' aria-label='calendar icon' size='s' />
+                <Text variant='primary' className='event-label'>
+                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Strasse}{' '}
+                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Hausnummer}
+                  ,
+                </Text>
+                <br />
+                <Text variant='primary' className='event-label'>
+                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.PLZ}{' '}
+                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Ort}
+                </Text>
+              </>
+            )}
+            {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
+              eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
+              <Button variant='primary' compact onClick={openPreviewEventOnClick}>
+                Open
+              </Button>
+            )}
           </CardContent>
         </Card>
       </Popover>
