@@ -490,20 +490,34 @@ export const PegaUidCalendar = (props: CalendarProps) => {
       >
         <Card>
           <CardHeader>
-            <Text variant='h3' className='popover-label'>
-              <Flex container={{ direction: 'row', gap: 2, alignItems: 'center' }}>
-                <span
-                  className='event-indicator'
-                  style={{ backgroundColor: eventInPopover.eventInfo?._def.ui.backgroundColor }}
-                ></span>
-                {eventInPopover.eventInfo?._def.title}
-              </Flex>
-            </Text>
+            <Grid
+              container={{
+                alignItems: 'center',
+                cols: 'auto auto',
+                colGap: 1
+              }}
+            >
+              <span
+                className='event-indicator'
+                style={{ backgroundColor: eventInPopover.eventInfo?._def.ui.backgroundColor }}
+              ></span>
+              <Text variant='h3'>{eventInPopover.eventInfo?._def.title}</Text>
+              {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
+                eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
+                <>
+                  <div></div>
+                  <Text variant='secondary'>
+                    {eventInPopover.eventInfo?._def.extendedProps.item.TerminID}
+                  </Text>
+                </>
+              )}
+            </Grid>
           </CardHeader>
           <hr className='solid'></hr>
           <CardContent>
             <Grid
               container={{
+                alignItems: 'center',
                 cols: 'auto auto',
                 colGap: 1,
                 rowGap: 1

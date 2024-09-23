@@ -138,7 +138,8 @@ const setPCore = () => {
                       'Mobile Nr.': '0123456789',
                       'E-mail': 'john.doe@candidate.com'
                     }
-                  }
+                  },
+                  TerminID: 'A-1003'
                 },
                 {
                   EndTime: '2024-09-11T11:00:00.000Z',
@@ -157,7 +158,8 @@ const setPCore = () => {
                       'Mobile Nr.': '0123456789',
                       'E-mail': 'joe.smith@candidate.com'
                     }
-                  }
+                  },
+                  TerminID: 'A-1002'
                 },
                 {
                   EndTime: '2024-09-12T15:00:00.000Z',
@@ -175,7 +177,8 @@ const setPCore = () => {
                       'Mobile Nr.': '0123456789',
                       'E-mail': 'jane.doe@candidate.com'
                     }
-                  }
+                  },
+                  TerminID: 'A-1001'
                 },
                 {
                   EndTime: '2024-09-05T15:30:00.000Z',
@@ -194,7 +197,8 @@ const setPCore = () => {
                       'Mobile Nr.': '0123456789',
                       'E-mail': 'marc.zuckerberg@candidate.com'
                     }
-                  }
+                  },
+                  TerminID: 'A-1000'
                 },
                 {
                   StartTime: '2024-09-17T11:00:00.000Z',
