@@ -15,7 +15,10 @@ import {
   Button,
   useTheme,
   StatusProps,
-  Popover
+  Popover,
+  Flex,
+  Grid,
+  CardFooter
 } from '@pega/cosmos-react-core';
 import StyledCalendarWrapper from './styles';
 import './create-nonce';
@@ -154,41 +157,43 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     }
   };
 
+  const renderBeratungsartBadge = (beratungsart: string) => {
+    let statusVariant: StatusProps['variant'] = 'info';
+    switch (beratungsart) {
+      case TerminGoal.ApplicationSubmission:
+        statusVariant = 'success';
+        break;
+      case TerminGoal.FollowUp:
+        statusVariant = 'pending';
+        break;
+      default:
+      case TerminGoal.FirstContact:
+        statusVariant = 'info';
+        break;
+    }
+    return (
+      <Status className='event-subject' variant={statusVariant}>
+        {beratungsart}
+      </Status>
+    );
+  };
+
   const renderEventContent = (eventInfo: EventContentArg) => {
     const def = eventInfo.event._def;
     const obj = def.extendedProps.item;
     const isMonthlyView = currentViewType === ViewType.Month;
     let eventDateStr = `${getDateTimeFromIsoString(obj.StartTime, dateTimeType.time)}`;
     eventDateStr += `-${getDateTimeFromIsoString(obj.EndTime, dateTimeType.time)}`;
-    let statusVariant: StatusProps['variant'] = 'info';
-    if (obj.Type === EventType.Appointment) {
-      switch (obj.Termin.Beratungsart) {
-        case TerminGoal.ApplicationSubmission:
-          statusVariant = 'success';
-          break;
-        case TerminGoal.FollowUp:
-          statusVariant = 'pending';
-          break;
-        default:
-        case TerminGoal.FirstContact:
-          statusVariant = 'info';
-          break;
-      }
-    }
     const eventLabel =
       isMonthlyView && !obj.CompleteDay
         ? `${eventDateStr} ${eventInfo.event.title}`
         : eventInfo.event.title;
     return (
-      <>
+      <div className='event-content'>
         <Text variant='h5' className='event-label'>
           {eventLabel}
         </Text>
-        {obj.Type === EventType.Appointment && (
-          <Status className='event-subject' variant={statusVariant}>
-            {obj.Termin.Beratungsart}
-          </Status>
-        )}
+        {obj.Type === EventType.Appointment && renderBeratungsartBadge(obj.Termin.Beratungsart)}
         {obj.Type === EventType.MassEvent && (
           <>
             <Icon name='location-solid' role='img' aria-label='Custom icon' size='s' />
@@ -197,7 +202,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             </Text>
           </>
         )}
-      </>
+      </div>
     );
   };
 
@@ -248,8 +253,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
       });
   };
 
-  const handleEventClick = () => {
-  };
+  const handleEventClick = () => {};
 
   const handleEventMouseEnter = (mouseEnterInfo: EventHoveringArg) => {
     setTimeout(
@@ -476,20 +480,42 @@ export const PegaUidCalendar = (props: CalendarProps) => {
       <Popover
         show={!!eventInPopover?.eventEl && !!eventInPopover?.eventInfo}
         target={eventInPopover.eventEl}
-        portal
+        portal={false}
         arrow
         showDelay='short'
         placement='right'
         onMouseEnter={handlePopoverMouseEnter}
         onMouseLeave={handlePopoverMouseLeave}
+        className='event-popover'
       >
         <Card>
-          <CardContent>
-            <Text variant='h3' className='event-label'>
-              {eventInPopover.eventInfo?._def.title}
+          <CardHeader>
+            <Text variant='h3' className='popover-label'>
+              <Flex container={{ direction: 'row', gap: 2, alignItems: 'center' }}>
+                <span
+                  className='event-indicator'
+                  style={{ backgroundColor: eventInPopover.eventInfo?._def.ui.backgroundColor }}
+                ></span>
+                {eventInPopover.eventInfo?._def.title}
+              </Flex>
             </Text>
-            <div>
-              <Icon name='calendar-empty' role='img' aria-label='calendar icon' size='s' />
+          </CardHeader>
+          <hr className='solid'></hr>
+          <CardContent>
+            <Grid
+              container={{
+                cols: 'auto auto',
+                colGap: 1,
+                rowGap: 1
+              }}
+            >
+              <Icon
+                name='calendar-empty-solid'
+                role='img'
+                aria-label='calendar icon'
+                size='s'
+                className='icon'
+              />
               <Text variant='primary' className='event-label'>
                 {getDateTimeFromIsoString(
                   eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
@@ -502,42 +528,80 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                   }
                 )}
               </Text>
-            </div>
-            <div>
-              <Icon name='clock' role='img' aria-label='clock icon' size='s' />
+              <Icon
+                name='clock-solid'
+                role='img'
+                aria-label='clock icon'
+                size='s'
+                className='icon'
+              />
               <Text variant='primary' className='event-label'>
                 {getDateTimeFromIsoString(
                   eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
                   dateTimeType.time
-                )}{' '}
+                )}
+                {' - '}
                 {getDateTimeFromIsoString(
                   eventInPopover.eventInfo?._def.extendedProps.item.EndTime,
                   dateTimeType.time
                 )}
               </Text>
-            </div>
-            {eventInPopover.eventInfo?._def.extendedProps.item.Sammeltermin && (
-              <>
-                <Icon name='location' role='img' aria-label='calendar icon' size='s' />
-                <Text variant='primary' className='event-label'>
-                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Strasse}{' '}
-                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Hausnummer}
-                  ,
-                </Text>
-                <br />
-                <Text variant='primary' className='event-label'>
-                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.PLZ}{' '}
-                  {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Ort}
-                </Text>
-              </>
-            )}
-            {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
-              eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
-              <Button variant='primary' compact onClick={openPreviewEventOnClick}>
-                Open
-              </Button>
-            )}
+
+              {eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment && (
+                <>
+                  <Icon
+                    name='wizard-solid'
+                    role='img'
+                    aria-label='Beratungsart'
+                    size='s'
+                    className='icon'
+                  />
+                  {renderBeratungsartBadge(
+                    eventInPopover.eventInfo?._def.extendedProps.item.Termin.Beratungsart
+                  )}
+                </>
+              )}
+              {eventInPopover.eventInfo?._def.extendedProps.item.Sammeltermin && (
+                <>
+                  <Icon
+                    name='location-solid'
+                    role='img'
+                    aria-label='calendar icon'
+                    size='s'
+                    className='icon'
+                  />
+                  <Flex container={{ direction: 'column', alignItems: 'start' }}>
+                    <Text variant='primary' className='event-label'>
+                      {
+                        eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address
+                          .Strasse
+                      }{' '}
+                      {
+                        eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address
+                          .Hausnummer
+                      }
+                      ,
+                    </Text>
+                    <Text variant='primary' className='event-label'>
+                      {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.PLZ}{' '}
+                      {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Ort}
+                    </Text>
+                  </Flex>
+                </>
+              )}
+            </Grid>
           </CardContent>
+          {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
+            eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
+            <>
+              <hr className='solid'></hr>
+              <CardFooter justify='center'>
+                <Button variant='primary' compact onClick={openPreviewEventOnClick}>
+                  Open
+                </Button>
+              </CardFooter>
+            </>
+          )}
         </Card>
       </Popover>
     </StyledCalendarWrapper>
