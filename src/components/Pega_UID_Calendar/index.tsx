@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { EventContentArg, EventClickArg, EventHoveringArg } from '@fullcalendar/core';
+import type { EventContentArg, EventHoveringArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import momentPlugin from '@fullcalendar/moment';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -18,12 +18,20 @@ import {
   Popover,
   Flex,
   Grid,
-  CardFooter
+  CardFooter,
+  registerIcon
 } from '@pega/cosmos-react-core';
 import StyledCalendarWrapper from './styles';
 import './create-nonce';
 import GlobalStyles from './global-styles';
 import type { CalendarApi } from '@fullcalendar/core';
+import * as LocationSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/locations-solid.icon';
+import * as Plus from '@pega/cosmos-react-core/lib/components/Icon/icons/plus.icon';
+import * as CalendarEmptySolid from '@pega/cosmos-react-core/lib/components/Icon/icons/calendar-empty-solid.icon';
+import * as ClockSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/clock-solid.icon';
+import * as WizardSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/wizard-solid.icon';
+
+registerIcon(LocationSolid, Plus, CalendarEmptySolid, ClockSolid, WizardSolid);
 
 type EventImpl = Parameters<CalendarApi['addEvent']>[0];
 
@@ -196,7 +204,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
         {obj.Type === EventType.Appointment && renderBeratungsartBadge(obj.Termin.Beratungsart)}
         {obj.Type === EventType.MassEvent && (
           <>
-            <Icon name='location-solid' role='img' aria-label='Custom icon' size='s' />
+            <Icon name='location-solid' role='img' aria-label='location icon' size='s' />
             <Text variant='primary' className='event-label'>
               {obj.Sammeltermin.Address.Ort}
             </Text>
@@ -580,7 +588,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                   <Icon
                     name='location-solid'
                     role='img'
-                    aria-label='calendar icon'
+                    aria-label='location icon'
                     size='s'
                     className='icon'
                   />
