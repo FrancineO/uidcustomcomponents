@@ -30,8 +30,24 @@ import * as Plus from '@pega/cosmos-react-core/lib/components/Icon/icons/plus.ic
 import * as CalendarEmptySolid from '@pega/cosmos-react-core/lib/components/Icon/icons/calendar-empty-solid.icon';
 import * as ClockSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/clock-solid.icon';
 import * as WizardSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/wizard-solid.icon';
+import * as UserGroupSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/users-solid.icon';
+import * as UserSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/user-solid.icon';
+import * as WebcamSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/webcam-solid.icon';
+import * as PhoneSolid from '@pega/cosmos-react-core/lib/components/Icon/icons/phone-solid.icon';
+import * as Building2Solid from '@pega/cosmos-react-core/lib/components/Icon/icons/building-2-solid.icon';
 
-registerIcon(LocationSolid, Plus, CalendarEmptySolid, ClockSolid, WizardSolid);
+registerIcon(
+  LocationSolid,
+  Plus,
+  CalendarEmptySolid,
+  ClockSolid,
+  WizardSolid,
+  UserGroupSolid,
+  UserSolid,
+  WebcamSolid,
+  PhoneSolid,
+  Building2Solid
+);
 
 type EventImpl = Parameters<CalendarApi['addEvent']>[0];
 
@@ -397,6 +413,20 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     loadEvents();
   }, []);
 
+  const getTypeIcon = (appointmentType: string) => {
+    switch (appointmentType) {
+      case 'Präsenzberatung':
+        return <Icon name='user-solid' />;
+      case 'Online':
+        return <Icon name='webcam-solid' />;
+      case 'Telefon':
+        return <Icon name='phone-solid' />;
+      case 'Außendienststelle':
+      default:
+        return <Icon name='building-2-solid' />;
+    }
+  };
+
   return (
     <StyledCalendarWrapper theme={theme}>
       <GlobalStyles theme={theme} />
@@ -557,17 +587,23 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                 size='s'
                 className='icon'
               />
-              <Text variant='primary' className='event-label'>
-                {getDateTimeFromIsoString(
-                  eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
-                  dateTimeType.time
-                )}
-                {' - '}
-                {getDateTimeFromIsoString(
-                  eventInPopover.eventInfo?._def.extendedProps.item.EndTime,
-                  dateTimeType.time
-                )}
-              </Text>
+              {eventInPopover.eventInfo?._def.extendedProps.item.CompleteDay ? (
+                <Text variant='primary' className='event-label'>
+                  Ganzer Tag
+                </Text>
+              ) : (
+                <Text variant='primary' className='event-label'>
+                  {getDateTimeFromIsoString(
+                    eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
+                    dateTimeType.time
+                  )}
+                  {' - '}
+                  {getDateTimeFromIsoString(
+                    eventInPopover.eventInfo?._def.extendedProps.item.EndTime,
+                    dateTimeType.time
+                  )}
+                </Text>
+              )}
 
               {eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment && (
                 <>
@@ -609,6 +645,27 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                       {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Ort}
                     </Text>
                   </Flex>
+                  <Icon name='users-solid' role='img' aria-label='group icon' size='s' />
+                  <Flex container={{ direction: 'column', alignItems: 'start' }}>
+                    <Text variant='primary' className='event-label'>
+                      {
+                        eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin
+                          .GenutzteKapazitat
+                      }
+                      /{eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Kapazitaet}{' '}
+                      Kapazität
+                    </Text>
+                  </Flex>
+                </>
+              )}
+              {eventInPopover.eventInfo?._def.extendedProps.item.Beratungsstelle?.Typ && (
+                <>
+                  {getTypeIcon(
+                    eventInPopover.eventInfo._def.extendedProps.item.Beratungsstelle?.Typ
+                  )}
+                  <Text variant='primary' className='event-label'>
+                    {eventInPopover.eventInfo?._def.extendedProps.item.Beratungsstelle?.Typ}
+                  </Text>
                 </>
               )}
             </Grid>

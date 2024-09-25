@@ -83,7 +83,12 @@ const setPCore = () => {
                       Hausnummer: '2',
                       PLZ: 80539,
                       Ort: 'München'
-                    }
+                    },
+                    Kapazitaet: 100,
+                    GenutzteKapazitat: 68
+                  },
+                  Beratungsstelle: {
+                    Typ: 'Präsenzberatung'
                   }
                 },
                 {
@@ -100,7 +105,12 @@ const setPCore = () => {
                       Hausnummer: '2',
                       PLZ: 80539,
                       Ort: 'München'
-                    }
+                    },
+                    Kapazitaet: 500,
+                    GenutzteKapazitat: 412
+                  },
+                  Beratungsstelle: {
+                    Typ: 'Online'
                   }
                 },
                 {
@@ -119,6 +129,9 @@ const setPCore = () => {
                       FullName: 'James Smith',
                       Salutation: 'Herr'
                     }
+                  },
+                  Beratungsstelle: {
+                    Typ: 'Telefon'
                   }
                 },
                 {
@@ -139,7 +152,10 @@ const setPCore = () => {
                       'E-mail': 'john.doe@candidate.com'
                     }
                   },
-                  TerminID: 'A-1003'
+                  TerminID: 'A-1003',
+                  Beratungsstelle: {
+                    Typ: 'Außendienststelle'
+                  }
                 },
                 {
                   EndTime: '2024-09-11T11:00:00.000Z',
