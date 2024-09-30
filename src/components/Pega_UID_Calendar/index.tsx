@@ -139,6 +139,8 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     inEl: boolean;
   }>({ eventEl: null, eventInfo: null, inPopover: false, inEl: false });
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const getDateTimeFromIsoString = (
     isoString: string,
     dateOrTime: dateTimeType,
@@ -231,6 +233,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
   };
 
   const loadEvents = () => {
+    setIsLoading(true);
     (window as any).PCore.getDataApiUtils()
       .getData(dataPage, {})
       .then((response: any) => {
@@ -274,7 +277,8 @@ export const PegaUidCalendar = (props: CalendarProps) => {
           });
           setEvents(tmpevents);
         }
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   const handleEventClick = () => {};
@@ -413,6 +417,11 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     loadEvents();
   }, []);
 
+  const calTable = document.body.querySelector('.fc');
+  if (calTable) {
+    (calTable as HTMLElement).style.setProperty('opacity', isLoading ? '0.25' : '1');
+  }
+
   const getTypeIcon = (appointmentType: string) => {
     switch (appointmentType) {
       case 'Präsenzberatung':
@@ -512,6 +521,31 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             dayHeaderFormat={{ weekday: 'long', day: 'numeric' }}
             buttonText={{ today: 'Heute', month: 'Monat', week: 'Woche', day: 'Tag' }}
           />
+          {isLoading && (
+            <div
+              style={{
+                flex: '1',
+                display: 'flex',
+                position: 'absolute',
+                height: '100%',
+                width: '100%'
+              }}
+            >
+              <p style={{ margin: 'auto' }}>
+                <span
+                  style={{
+                    backgroundColor: 'white',
+                    border: '1px solid lightgrey',
+                    borderRadius: '0.5rem',
+                    padding: '0.5rem',
+                    boxShadow: '2px 3px 6px lightgrey'
+                  }}
+                >
+                  Lade Daten, bitte warten...
+                </span>
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
