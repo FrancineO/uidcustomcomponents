@@ -49,44 +49,51 @@ registerIcon(
   Building2Solid
 );
 
-type EventImpl = Parameters<CalendarApi['addEvent']>[0];
+export type TEventImpl = Parameters<CalendarApi['addEvent']>[0];
 
-enum ViewType {
+export enum EViewType {
   Day = 'timeGridDay',
   Week = 'timeGridWeek',
   WorkWeek = 'workingWeek',
   Month = 'dayGridMonth'
 }
 
-enum TerminGoal {
+export enum ETerminGoal {
   FirstContact = 'Erstberatung',
   FollowUp = 'Folgeberatung',
   ApplicationSubmission = 'Bewerbungsabgabe'
 }
 
-enum EventType {
+export enum EEventType {
   Absence = 'Abwesend',
   Availability = 'Verfügbar',
   Appointment = 'Termin',
   MassEvent = 'Sammel'
 }
 
-enum dateTimeType {
+export enum EDateTimeType {
   date = 'date',
   time = 'time'
 }
 
-type CalendarProps = {
-  heading: string;
-  dataPage: string;
+export enum EBeratungsTyp {
+  presence = 'Präsenzberatung',
+  online = 'Online',
+  phone = 'Telefon',
+  office = 'Außendienststelle'
+}
+
+export type TCalendarProps = {
+  heading?: string;
+  dataPage?: string;
   createClassname?: string;
-  defaultViewMode: 'Monthly' | 'Weekly' | 'Daily';
-  nowIndicator: boolean;
-  weekendIndicator: boolean;
+  defaultViewMode?: 'Monthly' | 'Weekly' | 'Daily';
+  nowIndicator?: boolean;
+  weekendIndicator?: boolean;
   getPConnect: any;
 };
 
-type Event = {
+export type TEvent = {
   id: string;
   title: string;
   start: Date;
@@ -94,18 +101,107 @@ type Event = {
   item: any;
   display: string;
   allDay?: boolean;
+  overlap: boolean;
   color: string;
   extendedProps?: { [key: string]: any };
 };
 
-type DateInfo = {
-  view: { type: ViewType };
+export interface IPegaObject {
+  pxUpdateSystemID?: string;
+  pxUpdateDateTime?: string;
+  pxUpdateOpName?: string;
+  pxUpdateOperator?: string;
+  pySourcePage?: {
+    pxObjClass: string;
+    pySourceIdentifier: string;
+    pySourceNumber: string;
+    pySourceClass: string;
+    pySourceType: string;
+  };
+  pxCreateDateTime?: string;
+  pxDPParameters?: {
+    pyGUID?: string;
+    Typ?: string;
+  };
+  pxSaveDateTime?: string | null;
+  pzLoadTime?: string;
+  pzPageNameHash?: string;
+  pzInsKey?: string;
+  pzPageNameBase?: string;
+  pxObjClass: string;
+  pxCreateOperator?: string;
+  pxCreateSystemID?: string;
+  pxCommitDateTime?: string | null;
+  pyGUID?: string;
+  pxCreateOpName?: string;
+}
+
+export interface IAdresse extends IPegaObject {
+  Raum: string;
+  Hausnummer: string;
+  Ort: string;
+  Strasse: string;
+  PLZ: string;
+  Gebaudeteil: string;
+  Bezeichnung: string;
+}
+
+export interface IBeratungsstelle extends IPegaObject {
+  Adresse: IAdresse;
+  Webexlink: string;
+  DisplayOrder: number;
+  Beschreibung: string;
+  Typ: EBeratungsTyp;
+  OrganisationseinheitID: string;
+  AddressID: string;
+}
+
+export interface ITerminTyp extends IPegaObject {
+  Order: 1;
+  Typ: 'Präsenzberatung';
+}
+
+export interface IContact extends IPegaObject {
+  FirstName: string;
+  FullName: string;
+  LastName: string;
+  Salutation: string;
+}
+
+export interface ITermin extends IPegaObject {
+  TerminTyp: Array<ITerminTyp>;
+  Beratungsart: ETerminGoal;
+  Contact: IContact;
+}
+
+export interface IRawEvent extends IPegaObject {
+  Beratungsstelle: IBeratungsstelle;
+  AuthorID: string;
+  EndTime: Date;
+  CompleteDay: boolean;
+  StartTime: Date;
+  Termin: ITermin | null;
+  SerieRepeat: string;
+  Subject: string;
+  BeratungsstelleID: string;
+  Weekday: string;
+  Type: EEventType;
+  ParentSerieID: string;
+  Capacity: string;
+  IsSerie: boolean;
+  SerieEndDate: string;
+  TerminID: string;
+  MonthDisplayText: string;
+}
+
+export type TDateInfo = {
+  view: { type: EViewType };
   startStr?: string;
   start?: Date;
   end?: Date;
 };
 
-export const PegaUidCalendar = (props: CalendarProps) => {
+export const PegaUidCalendar = (props: TCalendarProps) => {
   const {
     heading = '',
     dataPage = '',
@@ -115,15 +211,16 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     weekendIndicator = true,
     getPConnect
   } = props;
-  const [events, setEvents] = useState<Array<Event>>([]);
+
+  const [events, setEvents] = useState<Array<TEvent>>([]);
   // const [workingWeek, setWorkingWeek] = useState<boolean>(false);
   const calendarRef = useRef<any | null>(null);
   const theme = useTheme();
-  let dateInfo: DateInfo = { view: { type: ViewType.Month } };
+  let dateInfo: TDateInfo = { view: { type: EViewType.Month } };
   const dateInfoStr = localStorage.getItem('fullcalendar');
   if (dateInfoStr) {
     dateInfo = JSON.parse(dateInfoStr);
-    if (dateInfo.view.type === ViewType.Month && dateInfo.end && dateInfo.start) {
+    if (dateInfo.view.type === EViewType.Month && dateInfo.end && dateInfo.start) {
       /* If showing Month - find the date in the middle to get the Month */
       const endDate = new Date(dateInfo.end).valueOf();
       const startDate = new Date(dateInfo.start).valueOf();
@@ -134,46 +231,143 @@ export const PegaUidCalendar = (props: CalendarProps) => {
 
   const [eventInPopover, setEventInPopover] = useState<{
     eventEl: HTMLDivElement | null;
-    eventInfo: EventImpl | null;
+    eventInfo: TEventImpl | null;
     inPopover: boolean;
     inEl: boolean;
   }>({ eventEl: null, eventInfo: null, inPopover: false, inEl: false });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const getDateTimeFromIsoString = (
-    isoString: string,
-    dateOrTime: dateTimeType,
-    options: any = {},
-    locale: string = 'de-DE'
-  ) => {
-    const dateTime = new Date(isoString);
-    return dateOrTime === dateTimeType.date
-      ? dateTime.toLocaleDateString(locale, options)
-      : dateTime.toLocaleTimeString(locale, { ...options, hour: '2-digit', minute: '2-digit' });
-  };
-
-  const getDefaultView = (): ViewType => {
+  const getDefaultView = (): EViewType => {
     if (dateInfo?.view?.type) {
       /* If the context is persisted in session storage - then used this info as default view */
       return dateInfo.view.type;
     }
-    let defaultView: ViewType;
+    let defaultView: EViewType;
     switch (defaultViewMode) {
       case 'Weekly':
-        defaultView = ViewType.Week;
+        defaultView = EViewType.Week;
         break;
       case 'Daily':
-        defaultView = ViewType.Day;
+        defaultView = EViewType.Day;
         break;
       default:
       case 'Monthly':
-        defaultView = ViewType.Month;
+        defaultView = EViewType.Month;
         break;
     }
     return defaultView;
   };
-  const [currentViewType, setCurrentViewType] = useState<ViewType>(getDefaultView());
+
+  const [currentViewType, setCurrentViewType] = useState<EViewType>(getDefaultView());
+  const [rawData, setRawData] = useState<Array<IRawEvent>>([]);
+
+  const fillEvents = (data: Array<IRawEvent> = rawData) => {
+    const tmpevents: Array<TEvent> = [];
+    (data || rawData).forEach((item: IRawEvent) => {
+      let color: string;
+      let display = 'block';
+      let title = '';
+      let overlap = false;
+      switch (item.Type) {
+        case EEventType.Availability: {
+          color =
+            currentViewType.indexOf('Week') > 0 ? 'transparent' : theme.base.colors.green.light;
+          display = 'background';
+          title = item.Type;
+          overlap = true;
+          break;
+        }
+        case EEventType.Appointment:
+          color = theme.base.colors.blue.dark;
+          title = `${item.Termin?.Contact.FullName}`;
+          break;
+        case EEventType.Absence:
+          color = theme.base.colors.red.dark;
+          title = item.Subject;
+          break;
+        default:
+        case EEventType.MassEvent:
+          color = theme.base.colors.orange.dark;
+          title = item.Subject;
+          break;
+      }
+
+      tmpevents.push({
+        id: item.pyGUID || '',
+        title,
+        start: item.StartTime,
+        end: item.EndTime,
+        display,
+        color,
+        allDay: item.CompleteDay,
+        overlap,
+        item
+      });
+    });
+    setEvents(tmpevents);
+  };
+
+  const loadEvents = () => {
+    setIsLoading(true);
+    (window as any).PCore.getDataApiUtils()
+      .getData(dataPage, {})
+      .then((response: any) => {
+        if (response.data.data !== null) {
+          setRawData(response.data.data);
+          fillEvents(response.data.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  /* Subscribe to changes to the assignment case */
+  useEffect(() => {
+    (window as any).PCore.getPubSubUtils().subscribe(
+      (window as any).PCore.getEvents().getCaseEvent().ASSIGNMENT_SUBMISSION,
+      () => {
+        /* If an assignment is updated - force a reload of the events */
+        loadEvents();
+      },
+      'ASSIGNMENT_SUBMISSION'
+    );
+    return () => {
+      (window as any).PCore.getPubSubUtils().unsubscribe(
+        (window as any).PCore.getEvents().getCaseEvent().ASSIGNMENT_SUBMISSION,
+        'ASSIGNMENT_SUBMISSION'
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const getTypeIcon = (appointmentType: string) => {
+    switch (appointmentType) {
+      case 'Präsenzberatung':
+        return <Icon name='user-solid' />;
+      case 'Online':
+        return <Icon name='webcam-solid' />;
+      case 'Telefon':
+        return <Icon name='phone-solid' />;
+      case 'Außendienststelle':
+      default:
+        return <Icon name='building-2-solid' />;
+    }
+  };
+
+  const getDateTimeFromIsoString = (
+    isoString: string,
+    dateOrTime: EDateTimeType,
+    options: any = {},
+    locale: string = 'de-DE'
+  ) => {
+    const dateTime = new Date(isoString);
+    return dateOrTime === EDateTimeType.date
+      ? dateTime.toLocaleDateString(locale, options)
+      : dateTime.toLocaleTimeString(locale, { ...options, hour: '2-digit', minute: '2-digit' });
+  };
 
   const addNewEvent = () => {
     if (createClassname) {
@@ -186,14 +380,14 @@ export const PegaUidCalendar = (props: CalendarProps) => {
   const renderBeratungsartBadge = (beratungsart: string) => {
     let statusVariant: StatusProps['variant'] = 'info';
     switch (beratungsart) {
-      case TerminGoal.ApplicationSubmission:
+      case ETerminGoal.ApplicationSubmission:
         statusVariant = 'success';
         break;
-      case TerminGoal.FollowUp:
+      case ETerminGoal.FollowUp:
         statusVariant = 'pending';
         break;
       default:
-      case TerminGoal.FirstContact:
+      case ETerminGoal.FirstContact:
         statusVariant = 'info';
         break;
     }
@@ -207,20 +401,47 @@ export const PegaUidCalendar = (props: CalendarProps) => {
   const renderEventContent = (eventInfo: EventContentArg) => {
     const def = eventInfo.event._def;
     const obj = def.extendedProps.item;
-    const isMonthlyView = currentViewType === ViewType.Month;
-    let eventDateStr = `${getDateTimeFromIsoString(obj.StartTime, dateTimeType.time)}`;
-    eventDateStr += `-${getDateTimeFromIsoString(obj.EndTime, dateTimeType.time)}`;
+    const isMonthlyView = currentViewType === EViewType.Month;
+    let eventDateStr = `${getDateTimeFromIsoString(obj.StartTime, EDateTimeType.time)}`;
+    eventDateStr += `-${getDateTimeFromIsoString(obj.EndTime, EDateTimeType.time)}`;
     const eventLabel =
       isMonthlyView && !obj.CompleteDay
         ? `${eventDateStr} ${eventInfo.event.title}`
         : eventInfo.event.title;
+    if (obj.Type === 'Verfügbar' && currentViewType.indexOf('Week') > 0 && !!obj.Beratungsstelle) {
+      const bTyp = obj.Beratungsstelle?.Typ || '';
+      let left = '0%';
+      switch (bTyp) {
+        case 'Telefon':
+          left = '25%';
+          break;
+        case 'Online':
+          left = '50%';
+          break;
+        case 'Präsenzberatung':
+          left = '75%';
+          break;
+        default:
+      }
+      return (
+        <div
+          className='event-content availability'
+          style={{
+            backgroundColor: theme.base.colors.green.light,
+            left
+          }}
+        >
+          <span>{getTypeIcon(obj.Beratungsstelle.Typ)}</span>
+        </div>
+      );
+    }
     return (
       <div className='event-content'>
         <Text variant='h5' className='event-label'>
           {eventLabel}
         </Text>
-        {obj.Type === EventType.Appointment && renderBeratungsartBadge(obj.Termin.Beratungsart)}
-        {obj.Type === EventType.MassEvent && (
+        {obj.Type === EEventType.Appointment && renderBeratungsartBadge(obj.Termin.Beratungsart)}
+        {obj.Type === EEventType.MassEvent && (
           <>
             <Icon name='location-solid' role='img' aria-label='location icon' size='s' />
             <Text variant='primary' className='event-label'>
@@ -232,72 +453,28 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     );
   };
 
-  const loadEvents = () => {
-    setIsLoading(true);
-    (window as any).PCore.getDataApiUtils()
-      .getData(dataPage, {})
-      .then((response: any) => {
-        if (response.data.data !== null) {
-          const tmpevents: Array<Event> = [];
-          response.data.data.forEach((item: any) => {
-            let color: string;
-            let display = 'block';
-            let title = '';
-            switch (item.Type) {
-              case EventType.Availability:
-                color = theme.base.colors.green.light;
-                display = 'background';
-                title = item.Type;
-                break;
-              case EventType.Appointment:
-                color = theme.base.colors.blue.dark;
-                title = `${item.Termin.Contact.FullName}`;
-                break;
-              case EventType.Absence:
-                color = theme.base.colors.red.dark;
-                title = item.Subject;
-                break;
-              default:
-              case EventType.MassEvent:
-                color = theme.base.colors.orange.dark;
-                title = item.Subject;
-                break;
-            }
-
-            tmpevents.push({
-              id: item.pyGUID,
-              title,
-              start: item.StartTime,
-              end: item.EndTime,
-              display,
-              color,
-              allDay: item.CompleteDay,
-              item
-            });
-          });
-          setEvents(tmpevents);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  };
-
   const handleEventClick = () => {};
 
   const handleEventMouseEnter = (mouseEnterInfo: EventHoveringArg) => {
-    setTimeout(
-      () =>
-        setEventInPopover({
-          eventEl: eventInPopover.inPopover
-            ? eventInPopover.eventEl
-            : (mouseEnterInfo.el as HTMLDivElement),
-          eventInfo: eventInPopover.inPopover
-            ? eventInPopover.eventInfo
-            : (mouseEnterInfo.event as EventImpl),
-          inPopover: false,
-          inEl: true
-        }),
-      100
-    );
+    const eventEl = eventInPopover.inPopover
+      ? eventInPopover.eventEl
+      : (mouseEnterInfo.el as HTMLDivElement);
+    const eventInfo = eventInPopover.inPopover
+      ? eventInPopover.eventInfo
+      : (mouseEnterInfo.event as TEventImpl);
+
+    if (eventInfo?._def.extendedProps.item.Type !== 'Verfügbar') {
+      setTimeout(
+        () =>
+          setEventInPopover({
+            eventEl,
+            eventInfo,
+            inPopover: false,
+            inEl: true
+          }),
+        100
+      );
+    }
   };
 
   const handleEventMouseLeave = () => {
@@ -337,48 +514,52 @@ export const PegaUidCalendar = (props: CalendarProps) => {
 
   const handleDateChange = (objInfo: any) => {
     const calendar = objInfo.view.calendar;
-    if (objInfo.view.type === ViewType.Week && currentViewType === ViewType.WorkWeek) {
+    if (objInfo.view.type === EViewType.Week && currentViewType === EViewType.WorkWeek) {
       calendar.setOption('weekends', false);
     } else {
       calendar.setOption('weekends', weekendIndicator);
     }
     switch (currentViewType) {
-      case ViewType.Day:
-        setCurrentViewType(ViewType.Day);
+      case EViewType.Day:
+        setCurrentViewType(EViewType.Day);
         document.getElementsByClassName('fc-dailyView-button')[0].classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
+        fillEvents();
         break;
-      case ViewType.Week:
-        setCurrentViewType(ViewType.Week);
+      case EViewType.Week:
+        setCurrentViewType(EViewType.Week);
         document
           .getElementsByClassName('fc-weeklyView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
+        fillEvents();
         break;
-      case ViewType.WorkWeek:
-        setCurrentViewType(ViewType.WorkWeek);
+      case EViewType.WorkWeek:
+        setCurrentViewType(EViewType.WorkWeek);
         document
           .getElementsByClassName('fc-workingWeekView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
+        fillEvents();
         break;
       default:
-      case ViewType.Month:
-        setCurrentViewType(ViewType.Month);
+      case EViewType.Month:
+        setCurrentViewType(EViewType.Month);
         document
           .getElementsByClassName('fc-MonthlyView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long' });
+        fillEvents();
         break;
     }
     localStorage.setItem('fullcalendar', JSON.stringify(objInfo));
   };
 
-  const onViewButtonClick = (event: any, viewType: ViewType) => {
+  const onViewButtonClick = (event: any, viewType: EViewType) => {
     if (calendarRef) {
       const cal: any = calendarRef.current;
       const calendarAPI = cal.getApi();
-      const view = viewType === ViewType.WorkWeek ? ViewType.Week : viewType;
+      const view = viewType === EViewType.WorkWeek ? EViewType.Week : viewType;
       setCurrentViewType(viewType);
       calendarAPI.changeView(view);
       const viewButtons = (event.target as HTMLElement).parentNode?.children;
@@ -395,46 +576,10 @@ export const PegaUidCalendar = (props: CalendarProps) => {
     });
   };
 
-  /* Subscribe to changes to the assignment case */
-  useEffect(() => {
-    (window as any).PCore.getPubSubUtils().subscribe(
-      (window as any).PCore.getEvents().getCaseEvent().ASSIGNMENT_SUBMISSION,
-      () => {
-        /* If an assignment is updated - force a reload of the events */
-        loadEvents();
-      },
-      'ASSIGNMENT_SUBMISSION'
-    );
-    return () => {
-      (window as any).PCore.getPubSubUtils().unsubscribe(
-        (window as any).PCore.getEvents().getCaseEvent().ASSIGNMENT_SUBMISSION,
-        'ASSIGNMENT_SUBMISSION'
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
   const calTable = document.body.querySelector('.fc');
   if (calTable) {
     (calTable as HTMLElement).style.setProperty('opacity', isLoading ? '0.25' : '1');
   }
-
-  const getTypeIcon = (appointmentType: string) => {
-    switch (appointmentType) {
-      case 'Präsenzberatung':
-        return <Icon name='user-solid' />;
-      case 'Online':
-        return <Icon name='webcam-solid' />;
-      case 'Telefon':
-        return <Icon name='phone-solid' />;
-      case 'Außendienststelle':
-      default:
-        return <Icon name='building-2-solid' />;
-    }
-  };
 
   return (
     <StyledCalendarWrapper theme={theme}>
@@ -457,19 +602,19 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             customButtons={{
               dailyView: {
                 text: 'Tag',
-                click: event => onViewButtonClick(event, ViewType.Day)
+                click: event => onViewButtonClick(event, EViewType.Day)
               },
               weeklyView: {
                 text: 'Woche',
-                click: event => onViewButtonClick(event, ViewType.Week)
+                click: event => onViewButtonClick(event, EViewType.Week)
               },
               workingWeekView: {
                 text: 'Arbeitswoche',
-                click: event => onViewButtonClick(event, ViewType.WorkWeek)
+                click: event => onViewButtonClick(event, EViewType.WorkWeek)
               },
               MonthlyView: {
                 text: 'Monat',
-                click: event => onViewButtonClick(event, ViewType.Month)
+                click: event => onViewButtonClick(event, EViewType.Month)
               }
             }}
             headerToolbar={{
@@ -486,8 +631,8 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             allDayText='Ganztags'
             slotMinTime='06:00:00'
             slotMaxTime='21:00:00'
-            height={800}
-            contentHeight={800}
+            height={currentViewType.indexOf('Week') > 0 ? 1600 : 'auto'}
+            contentHeight={currentViewType.indexOf('Week') > 0 ? 1600 : 'auto'}
             slotEventOverlap={false}
             events={events}
             eventContent={renderEventContent}
@@ -513,7 +658,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             selectConstraint='businessHours'
             // titleFormat={{ year: 'numeric', month: 'long', day: 'numeric' }}
             titleFormat={
-              currentViewType === ViewType.Day
+              currentViewType === EViewType.Day
                 ? 'dddd, DD. MMMM YYYY'
                 : { year: 'numeric', month: 'long', day: 'numeric' }
             }
@@ -522,27 +667,9 @@ export const PegaUidCalendar = (props: CalendarProps) => {
             buttonText={{ today: 'Heute', month: 'Monat', week: 'Woche', day: 'Tag' }}
           />
           {isLoading && (
-            <div
-              style={{
-                flex: '1',
-                display: 'flex',
-                position: 'absolute',
-                height: '100%',
-                width: '100%'
-              }}
-            >
-              <p style={{ margin: 'auto' }}>
-                <span
-                  style={{
-                    backgroundColor: 'white',
-                    border: '1px solid lightgrey',
-                    borderRadius: '0.5rem',
-                    padding: '0.5rem',
-                    boxShadow: '2px 3px 6px lightgrey'
-                  }}
-                >
-                  Lade Daten, bitte warten...
-                </span>
+            <div className='loading-indicator'>
+              <p>
+                <span>Lade Daten, bitte warten...</span>
               </p>
             </div>
           )}
@@ -574,8 +701,9 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                 style={{ backgroundColor: eventInPopover.eventInfo?._def.ui.backgroundColor }}
               ></span>
               <Text variant='h3'>{eventInPopover.eventInfo?._def.title}</Text>
-              {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
-                eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
+              {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EEventType.Appointment ||
+                eventInPopover.eventInfo?._def.extendedProps.item.Type ===
+                  EEventType.MassEvent) && (
                 <>
                   <div></div>
                   <Text variant='secondary'>
@@ -605,7 +733,7 @@ export const PegaUidCalendar = (props: CalendarProps) => {
               <Text variant='primary' className='event-label'>
                 {getDateTimeFromIsoString(
                   eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
-                  dateTimeType.date,
+                  EDateTimeType.date,
                   {
                     weekday: 'long',
                     year: 'numeric',
@@ -629,17 +757,18 @@ export const PegaUidCalendar = (props: CalendarProps) => {
                 <Text variant='primary' className='event-label'>
                   {getDateTimeFromIsoString(
                     eventInPopover.eventInfo?._def.extendedProps.item.StartTime,
-                    dateTimeType.time
+                    EDateTimeType.time
                   )}
                   {' - '}
                   {getDateTimeFromIsoString(
                     eventInPopover.eventInfo?._def.extendedProps.item.EndTime,
-                    dateTimeType.time
+                    EDateTimeType.time
                   )}
                 </Text>
               )}
 
-              {eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment && (
+              {eventInPopover.eventInfo?._def.extendedProps.item.Type ===
+                EEventType.Appointment && (
                 <>
                   <Icon
                     name='wizard-solid'
@@ -704,8 +833,8 @@ export const PegaUidCalendar = (props: CalendarProps) => {
               )}
             </Grid>
           </CardContent>
-          {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.Appointment ||
-            eventInPopover.eventInfo?._def.extendedProps.item.Type === EventType.MassEvent) && (
+          {(eventInPopover.eventInfo?._def.extendedProps.item.Type === EEventType.Appointment ||
+            eventInPopover.eventInfo?._def.extendedProps.item.Type === EEventType.MassEvent) && (
             <>
               <hr className='solid'></hr>
               <CardFooter justify='center'>
