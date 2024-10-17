@@ -101,7 +101,6 @@ export type TEvent = {
   item: any;
   display: string;
   allDay?: boolean;
-  overlap: boolean;
   color: string;
   extendedProps?: { [key: string]: any };
 };
@@ -174,6 +173,10 @@ export interface ITermin extends IPegaObject {
   Contact: IContact;
 }
 
+export interface ISammeltermin extends IPegaObject {
+  Ortsadresse: string;
+}
+
 export interface IRawEvent extends IPegaObject {
   Beratungsstelle: IBeratungsstelle;
   AuthorID: string;
@@ -192,6 +195,7 @@ export interface IRawEvent extends IPegaObject {
   SerieEndDate: string;
   TerminID: string;
   MonthDisplayText: string;
+  Sammeltermin?: ISammeltermin;
 }
 
 export type TDateInfo = {
@@ -263,19 +267,18 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
   const [rawData, setRawData] = useState<Array<IRawEvent>>([]);
 
   const fillEvents = (data: Array<IRawEvent> = rawData) => {
+    setEvents([]);
     const tmpevents: Array<TEvent> = [];
     (data || rawData).forEach((item: IRawEvent) => {
       let color: string;
       let display = 'block';
       let title = '';
-      let overlap = false;
       switch (item.Type) {
         case EEventType.Availability: {
           color =
             currentViewType.indexOf('Week') > 0 ? 'transparent' : theme.base.colors.green.light;
           display = 'background';
           title = item.Type;
-          overlap = true;
           break;
         }
         case EEventType.Appointment:
@@ -301,7 +304,6 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
         display,
         color,
         allDay: item.CompleteDay,
-        overlap,
         item
       });
     });
@@ -410,18 +412,20 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
         : eventInfo.event.title;
     if (obj.Type === 'Verfügbar' && currentViewType.indexOf('Week') > 0 && !!obj.Beratungsstelle) {
       const bTyp = obj.Beratungsstelle?.Typ || '';
-      let left = '0%';
+      let left;
       switch (bTyp) {
-        case 'Telefon':
-          left = '25%';
+        case 'Präsenzberatung':
+          left = '75%';
           break;
         case 'Online':
           left = '50%';
           break;
-        case 'Präsenzberatung':
-          left = '75%';
+        case 'Telefon':
+          left = '25%';
           break;
+        case 'Außendienststelle':
         default:
+          left = '0%';
       }
       return (
         <div
@@ -438,6 +442,9 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
     return (
       <div className='event-content'>
         <Text variant='h5' className='event-label'>
+          {obj.Type === EEventType.Availability && obj.Beratungsstelle.Typ && (
+            <span>{getTypeIcon(obj.Beratungsstelle.Typ)} </span>
+          )}
           {eventLabel}
         </Text>
         {obj.Type === EEventType.Appointment && renderBeratungsartBadge(obj.Termin.Beratungsart)}
@@ -445,7 +452,7 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
           <>
             <Icon name='location-solid' role='img' aria-label='location icon' size='s' />
             <Text variant='primary' className='event-label'>
-              {obj.Sammeltermin.Address.Ort}
+              {obj.Sammeltermin.Ort}
             </Text>
           </>
         )}
@@ -793,19 +800,7 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
                   />
                   <Flex container={{ direction: 'column', alignItems: 'start' }}>
                     <Text variant='primary' className='event-label'>
-                      {
-                        eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address
-                          .Strasse
-                      }{' '}
-                      {
-                        eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address
-                          .Hausnummer
-                      }
-                      ,
-                    </Text>
-                    <Text variant='primary' className='event-label'>
-                      {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.PLZ}{' '}
-                      {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Address.Ort}
+                      {eventInPopover.eventInfo._def.extendedProps.item.Sammeltermin.Ortsadresse}
                     </Text>
                   </Flex>
                   <Icon name='users-solid' role='img' aria-label='group icon' size='s' />
