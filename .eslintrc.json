@@ -76,7 +76,7 @@
     "no-console": "error",
     "no-fallthrough": "error",
     "no-undef": "error",
-    "no-unused-vars": "error",
+    "no-unused-vars": "off",
     "no-var": "error",
     "prefer-const": "error",
     "yoda": "error",
@@ -106,7 +106,7 @@
     "no-plusplus": "error",
     "no-restricted-globals": "error",
     "no-restricted-properties": "error",
-    "no-shadow": "error",
+    "no-shadow": "off",
     "radix": "error",
     "spaced-comment": "error",
 
@@ -135,7 +135,7 @@
     {
       "files": "*.@(ts|tsx)",
       "rules": {
-        "@typescript-eslint/method-signature-style": ["error", "property"],
+        "@typescript-eslint/method-signature-style": "error",
         // "@typescript-eslint/ban-types": [
         //   "warn",
         //   {

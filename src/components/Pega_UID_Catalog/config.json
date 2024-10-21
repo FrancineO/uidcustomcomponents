@@ -1,0 +1,42 @@
+{
+  "name": "Pega_UID_Catalog",
+  "label": "Catalog",
+  "description": "Catalog",
+  "organization": "Pega",
+  "version": "1.0.0",
+  "library": "UID",
+  "allowedApplications": [],
+  "componentKey": "Pega_UID_Catalog",
+  "type": "Template",
+  "subtype": "PAGE",
+  "icon": "OneColumnPage.svg",
+  "properties": [
+    {
+      "name": "referenceList",
+      "label": "Data page",
+      "format": "CONTENTPICKERSOURCE"
+    },
+    {
+      "name": "parameters",
+      "label": "",
+      "format": "PARAMETERS"
+    },
+    {
+      "name": "useConfigurableLayout",
+      "label": "Use inline layout for insights",
+      "format": "BOOLEAN"
+    },
+    {
+      "name": "enableGetNextWork",
+      "label": "Enable Get next work",
+      "format": "BOOLEAN"
+    },
+    {
+      "name": "A",
+      "label": "Region A",
+      "format": "CONTENTPICKER",
+      "addTypeList": ["Widgets", "Views", "Insights"]
+    }
+  ],
+  "defaultConfig": {}
+}
