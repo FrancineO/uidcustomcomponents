@@ -2805,7 +2805,8 @@ const setPCore = () => {
                         },
                         Beratungsstelle: {
                           Typ: 'Präsenzberatung'
-                        }
+                        },
+                        Weekday: '4'
                       },
                       {
                         pyGUID: 'A-1005',
@@ -3118,6 +3119,26 @@ const setPCore = () => {
                           VerfugbareKapazitat: 5,
                           Beratungsort: null,
                           Kapazitaet: 10
+                        }
+                      },
+                      {
+                        pyGUID: 'A-1004',
+                        Subject: 'Conference',
+                        CompleteDay: true,
+                        SerieRepeat: 'wöchentlich',
+                        SerieEndDate: '2024-12-31',
+                        EndTime: '2024-10-01T11:00:00.000Z',
+                        StartTime: '2024-10-01T10:00:00.000Z',
+                        Type: 'Sammel',
+                        Sammeltermin: {
+                          pzInsKey: 'Sammeltermin A-1004',
+                          Ortsadresse: 'Max-Joseph-Platz 2, 80539 München',
+                          Kapazitaet: 100,
+                          GenutzteKapazitat: 68,
+                          Ort: 'München'
+                        },
+                        Beratungsstelle: {
+                          Typ: 'Präsenzberatung'
                         }
                       }
                     ]

@@ -101,6 +101,11 @@ export type TEvent = {
   item: any;
   display: string;
   allDay?: boolean;
+  startTime?: Date;
+  endTime?: Date;
+  startRecur?: Date;
+  endRecur?: Date;
+  daysOfWeek?: Array<string>;
   color: string;
   extendedProps?: { [key: string]: any };
 };
@@ -192,7 +197,7 @@ export interface IRawEvent extends IPegaObject {
   ParentSerieID: string;
   Capacity: string;
   IsSerie: boolean;
-  SerieEndDate: string;
+  SerieEndDate: Date;
   TerminID: string;
   MonthDisplayText: string;
   Sammeltermin?: ISammeltermin;
@@ -277,7 +282,7 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
         case EEventType.Availability: {
           color =
             currentViewType.indexOf('Week') > 0 ? 'transparent' : theme.base.colors.green.light;
-          display = 'background';
+          display = currentViewType.indexOf('Week') > 0 ? 'background' : 'block';
           title = item.Type;
           break;
         }
@@ -295,17 +300,32 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
           title = item.Subject;
           break;
       }
-
-      tmpevents.push({
-        id: item.pyGUID || '',
-        title,
-        start: item.StartTime,
-        end: item.EndTime,
-        display,
-        color,
-        allDay: item.CompleteDay,
-        item
-      });
+      if (item.SerieRepeat) {
+        tmpevents.push({
+          id: item.pyGUID || '',
+          title,
+          start: item.StartTime,
+          end: item.EndTime,
+          daysOfWeek: [item.Weekday],
+          endRecur: item.SerieEndDate,
+          startRecur: item.StartTime,
+          display,
+          color,
+          allDay: item.CompleteDay,
+          item
+        });
+      } else {
+        tmpevents.push({
+          id: item.pyGUID || '',
+          title,
+          start: item.StartTime,
+          end: item.EndTime,
+          display,
+          color,
+          allDay: item.CompleteDay,
+          item
+        });
+      }
     });
     setEvents(tmpevents);
   };
@@ -521,6 +541,7 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
 
   const handleDateChange = (objInfo: any) => {
     const calendar = objInfo.view.calendar;
+    setTimeout(() => fillEvents(), 250);
     if (objInfo.view.type === EViewType.Week && currentViewType === EViewType.WorkWeek) {
       calendar.setOption('weekends', false);
     } else {
@@ -531,7 +552,6 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
         setCurrentViewType(EViewType.Day);
         document.getElementsByClassName('fc-dailyView-button')[0].classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
-        fillEvents();
         break;
       case EViewType.Week:
         setCurrentViewType(EViewType.Week);
@@ -539,7 +559,6 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
           .getElementsByClassName('fc-weeklyView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
-        fillEvents();
         break;
       case EViewType.WorkWeek:
         setCurrentViewType(EViewType.WorkWeek);
@@ -547,7 +566,6 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
           .getElementsByClassName('fc-workingWeekView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long', Month: 'long', day: 'numeric' });
-        fillEvents();
         break;
       default:
       case EViewType.Month:
@@ -556,7 +574,6 @@ export const PegaUidCalendar = (props: TCalendarProps) => {
           .getElementsByClassName('fc-MonthlyView-button')[0]
           .classList.add('fc-button-active');
         calendar.setOption('dayHeaderFormat', { weekday: 'long' });
-        fillEvents();
         break;
     }
     localStorage.setItem('fullcalendar', JSON.stringify(objInfo));
